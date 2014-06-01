@@ -4,34 +4,34 @@
 
 int getaline(char line[], int maxline);
 void copy(char to[], char from[]);
-int printlonglines(char s[], int min, int lim);
+void reverse(char reversed[], char original[]);
 
-/* print the longest input line */
+/* print each line in reverse */
 int main()
 {
   int len;                /* current line length */
   int linelength;         /* length of currrent line */
-  int max;                /* maximum length seen so far */
   char line[MAXLINE];     /* current input line */
-  char longest[MAXLINE];  /* longest line saved here */
+  char linecopy[MAXLINE];  /* copy line saved here */
+  char linereversed[MAXLINE];  /* reversed line saved here */
 
 //  max = 0;
 //  while ((len = getaline(line, MAXLINE)) > 0)
 //    if (len > max) {
 //      max = len;
-//      copy(longest, line);
+//      copy(linecopy, line);
 //    }
 //  if (max > 0) /* there was a line */
-//    printf("longest: \n%s", longest);
+//    printf("linecopy: \n%s", linecopy);
 
   while ((len = getaline(line, MAXLINE)) > 0)
   {
-    if (len > LONGLENGTH) {
-      linelength = len;
-      copy(longest, line);
-      if (len > 0) /* there was a line */
-        printf("line: \n%slength: %d\n", longest, len);
-    }
+    copy(linecopy, line);
+    reverse(linereversed, linecopy);
+    printf("%s", linecopy);
+    printf("\nreversed:\n");
+    printf("%s", linereversed);
+    printf("\n");
   }
 
   return 0;
@@ -52,7 +52,6 @@ int getaline(char s[], int lim)
       }
     }
   s[i] = '\0';
-  printf("linelength: %d", i);
   return i;
 }
 
@@ -75,12 +74,21 @@ void reverse(char reversed[], char original[])
   while (original[i] != '\0')
     ++i;
 
+  len = i+1;
+
   j = 0;
-  reversed[i+i] = '\0';
-  while (j <= i) {
-    reversed[j] = original[i];
+  while (j < len && i >= 0) {
+    reversed[j] = original[i-1];
     i--;
     j++;
   }
 
+//  printf("\n");
+//  i = 0;
+//  while (reversed[i] != '\0')
+//  {
+//    printf("%c",reversed[i]);
+//    i++;
+//  }
+//  printf("\n");
 }
