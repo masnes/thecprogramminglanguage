@@ -1,17 +1,20 @@
-CFLAGS=-Wall -g -c -lm
+CFLAGS=-Wall -lm -g
 CC=clang
 LDFLAGS=
 SOURCES=reversepolishcalc.c
 OBJECTS=$(SOURCES:.c=.o)
 EXECUTABLE=reversepolishcalc
 
-all: $(SOURCES) $(EXECUTABLE)
+all: reversepolishcalc
+	
+reversepolishcalc:
+	$(CC) $(CFLAGS) $(SOURCES) -o $(EXECUTABLE)
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+$@: 
+	$(CC) $(CFLAGS) $@ -o $@
 
-.c.o:
-	$(CC) $(CFLAGS) $< -o $@
+# .c.o:
+	# $(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf $(SOURCES:.c=)
+	rm -rf $(SOURCES:.c=) $(OBJECTS)
