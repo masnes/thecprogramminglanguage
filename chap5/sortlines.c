@@ -12,7 +12,7 @@ char *lineptr[MAXLINES];  /* pointers to text lines */
 
 int getaline(char *, int);
 char *alloc(int);
-int readlines(char *lineptr[], int nlines);
+int readlines(char *lineptr[], int nlines, char linearray[]);
 void writelines(char *lineptr[], int nlines);
 void qsort(char *lineptr[], int left, int right);
 void swap(char *v[], int i, int j);
@@ -24,8 +24,9 @@ int main()
   double time_spent;
 
   begin = clock();
+  char linearray[ALLOCSIZE];
   int nlines;     /* number of input lines read */
-  if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
+  if ((nlines = readlines(lineptr, MAXLINES, linearray)) >= 0) {
     qsort(lineptr, 0, nlines-1);
     writelines(lineptr, nlines);
     end = clock();
@@ -40,18 +41,20 @@ int main()
 
 
 /* readlines:  read input lines */
-int readlines(char *lineptr[], int maxlines)
+int readlines(char *lineptr[], int maxlines, char linearray[])
 {
   int len, nlines;
-  char *p, line[MAXLEN];
+  char *start, *p, line[MAXLEN];
+  p = start = linearray;
   nlines = 0;
   while ((len = getaline(line, MAXLEN)) > 0)
-    if (nlines >= maxlines || (p = alloc(len)) == NULL)
+    if (nlines >= maxlines || (p + len) - start >= ALLOCSIZE)
       return -1;
     else {
       line[len-1] = '\0';  /* delete newline */
       strcpy(p, line);
-      lineptr[nlines++] = p;
+      lineptr[nlines++] = p,
+      p += len;
     }
   return nlines;
 }
