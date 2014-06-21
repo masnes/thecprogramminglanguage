@@ -18,6 +18,16 @@ int strcmpa(char *s, char *t)
   return *s - *t;
 }
 
+/* strcmpnocase pointer version): return <0 if s<t, o if s==t, >0 if s>t */
+int strcmpnocase(char *s, char *t)
+{
+  assert(s != NULL && t != NULL);
+  for ( ; tolower(*s) == tolower(*t); s++, t++)
+    if (*s == '\0')
+      return 0;
+  return tolower(*s) - tolower(*t);
+}
+
 /* strcontainschar: return 1 if s contains t, 0 otherwise */
 int strcontainschar(char *s, char t)
 {
@@ -63,23 +73,39 @@ static char *allocp = allocbuf;  /* next free position */
 
 int main(int argc, char *argv[])
 {
-  int nlines;     /* number of input lines to read */
+  int nlines, i;     /* number of input lines to read */
   int numeric = 0;  /* 1 if numeric sort */
   int reversed = 0; /* 1 if reversed output */
+  int casesensitive = 1; /* 0 if not case sensitive */
+  int (*funcpointer)(void *, void *);
 
-  if (argc > 1 && strcontains(argv[1], "-n") && argv[1][0] == '-') {
-    numeric = 1;
-    printf("numeric\n");
+  for (i = 1; i < argc; i++) {
+    if (argv[i][0] == '-') {
+      if (strcontains(argv[i], "n")) {
+        numeric = 1;
+        printf("numeric\n");
+      }
+      if (strcontains(argv[i], "r")) {
+        reversed = 1;
+        printf("reversed\n");
+      }
+      if (strcontains(argv[i], "f")) {
+        casesensitive = 0;
+        printf("notcasesensitive\n");
+      }
+    }
   }
 
-  if (argc > 1 && strcontains(argv[1], "-r") && argv[1][0] == '-') {
-    reversed = 1;
-    printf("reversed\n");
+  // choose sorting function to use
+  if (numeric) {
+    funcpointer = (int (*)(void*,void*)) numcmp;
+  } else { // comparing string
+    funcpointer = (int (*)(void*,void*)) (!casesensitive ? strcmpnocase : strcmpa);
   }
 
   if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
     qsort((void**) lineptr, 0, nlines-1,
-        (int (*)(void*,void*))(numeric ? numcmp : strcmpa));
+        funcpointer);
     writelines(lineptr, nlines, reversed);
     return 0;
   } else {
