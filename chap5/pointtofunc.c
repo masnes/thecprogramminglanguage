@@ -8,7 +8,7 @@
 #define ALLOCSIZE 100000 /*  size of available space */
 #define MAXLEN 1000 /* max length of any input line */
 
-/* strcmpa (pointer version): return <0 if s<t, o if s==t, >0 if s>t */
+/* strcmpa (pointer version): return <0 if s<t, 0 if s==t, >0 if s>t */
 int strcmpa(char *s, char *t)
 {
   assert(s != NULL && t != NULL);
@@ -18,7 +18,7 @@ int strcmpa(char *s, char *t)
   return *s - *t;
 }
 
-/* strcmpnocase pointer version): return <0 if s<t, o if s==t, >0 if s>t */
+/* strcmpnocase pointer version): return <0 if s<t, 0 if s==t, >0 if s>t */
 int strcmpnocase(char *s, char *t)
 {
   assert(s != NULL && t != NULL);
@@ -26,6 +26,47 @@ int strcmpnocase(char *s, char *t)
     if (*s == '\0')
       return 0;
   return tolower(*s) - tolower(*t);
+}
+
+/* isntdircha: returns 1 if character isn't a letter, number, or blank, otherwise 0 */
+int isntdirchar(char c)
+{
+  if (isalpha(c))
+    return 0;
+  if (isdigit(c))
+    return 0;
+  if (isspace(c))
+    return 0;
+  return 1;
+}
+
+/* zerofunc: return 0 */
+int zerofunc(char c)
+{
+  return 0;
+}
+
+/* charreturn: return value of inputted char (nop) */
+int charreturn(int c)
+{
+  return c;
+}
+
+/* strcmpall: compare strings by given paramenters, returning
+ * >0 if s > t, 0 if s == t, < 0 if s < t */
+int strcmpall(char *s, char *t, int (*shouldskipchar)(int),
+    int (*charconversion)(char))
+{
+  assert(s != NULL && t != NULL);
+  while (*s != '\0' && *t != '\0') {
+    while (shouldskipchar(charconversion(*s)) && *s != '\0')
+      s++;
+    while (shouldskipchar(charconversion(*t)) && *t != '\0')
+      t++;
+    if (charconversion(*s) != charconversion(*t))
+      break;
+  }
+  return charconversion(*s) - charconversion(*t);
 }
 
 /* strcontainschar: return 1 if s contains t, 0 otherwise */
@@ -57,8 +98,8 @@ int readlines(char *lineptr[], int nlines);
 void writelines(char *lineptr[], int nlines, int reversed);
 
 void qsort(void *lineptr[], int left, int right,
-    int (*comp)(void *, void *));
-int numcmp(char *, char *);
+      int (*comp)(void*,void*,int skipchartest (int (*shouldskipchar)(char)),int conversion (int (*charconversion)(int))));
+//int numcmp(char *, char *);
 void swap(void *v[], int i, int j);
 int numcmp(char *s1, char *s2);
 double atof(char *s);
@@ -77,8 +118,16 @@ int main(int argc, char *argv[])
   int numeric = 0;  /* 1 if numeric sort */
   int reversed = 0; /* 1 if reversed output */
   int casesensitive = 1; /* 0 if not case sensitive */
-  int (*funcpointer)(void *, void *);
+  int directoryorder = 0; /* 1 if only checking letters/numbers/blanks */
+  // functions to use
+  /* comparison function to use */
+  int (*funcpointer)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int));
+  /* function used to determine if character should be skipped (possibly if not alphanum/blank, possibly a nop*/
+  int (*shouldskipchar)(char);
+  /* function used to convert character (possibly to lower case, possibly no conversion */
+  int (*charconversion)(int);
 
+  // parse input
   for (i = 1; i < argc; i++) {
     if (argv[i][0] == '-') {
       if (strcontains(argv[i], "n")) {
@@ -93,15 +142,27 @@ int main(int argc, char *argv[])
         casesensitive = 0;
         printf("notcasesensitive\n");
       }
+      if (strcontains(argv[i], "d")) {
+        directoryorder = 1;
+        printf("directoryorder\n");
+      }
     }
   }
 
-  // choose sorting function to use
-  if (numeric) {
-    funcpointer = (int (*)(void*,void*)) numcmp;
-  } else { // comparing string
-    funcpointer = (int (*)(void*,void*)) (!casesensitive ? strcmpnocase : strcmpa);
-  }
+  // skip non directory characters?
+  shouldskipchar = directoryorder ? isntdirchar : zerofunc;
+
+  // convert to lowercase, or just stay the same
+  charconversion = !casesensitive ? charreturn : tolower;
+
+  // numeric or string comparison
+  funcpointer =  numeric ?
+      (int (*)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int))) numcmp
+      :
+      (int (*)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int))) strcmpall;
+
+
+
 
   if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
     qsort((void**) lineptr, 0, nlines-1,
@@ -118,7 +179,7 @@ int main(int argc, char *argv[])
 
 /* qsort: sort v[left]...v[right] into increasing order */
 void qsort(void *v[], int left, int right,
-    int (*comp)(void *, void *))
+      int (*comp)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int)))
 {
   int i, last;
 
@@ -130,7 +191,7 @@ void qsort(void *v[], int left, int right,
   last = left;
   for (i = left+1; i <= right; i++) {
     //printf("i: %d, %ld, left: %d, %ld, %p right: %d, %ld\n s[i]:\"%s\", s[left]:\"%s\"\n", i, (char *) v[i] - allocbuf, left, (char *) v[left] - allocbuf, v[left], right, (char *) v[right] - allocbuf, v[i], v[left]);
-    if ( ((*comp)(v[i], v[left])) < 0 )
+    if ( ((*comp)(v[i], v[left], shouldskipchar, charconversion)) < 0 )
       swap(v, ++last, i);
   }
   swap(v, left, last);
