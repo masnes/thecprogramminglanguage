@@ -8,6 +8,28 @@
 #define ALLOCSIZE 100000 /*  size of available space */
 #define MAXLEN 1000 /* max length of any input line */
 
+char *lineptr[MAXLINES]; /* pointers to text lines */
+
+int readlines(char *lineptr[], int nlines);
+void writelines(char *lineptr[], int nlines, int reversed);
+
+void qsort(void *lineptr[], int left, int right,
+      int (*comp)(void*,void*,int (*shouldskipchar)(char), int (*charconversion)(int)),
+      int (*shouldskipchar)(char),
+      int (*charconversion)(int)
+      );
+//int numcmp(char *, char *);
+void swap(void *v[], int i, int j);
+int numcmp(char *s1, char *s2);
+double atof(char *s);
+
+int getaline(char *, int);
+char *alloc(int);
+
+static char allocbuf[ALLOCSIZE]; /* storage for alloc */
+static char *allocp = allocbuf;  /* next free position */
+
+
 /* strcmpa (pointer version): return <0 if s<t, 0 if s==t, >0 if s>t */
 int strcmpa(char *s, char *t)
 {
@@ -92,24 +114,6 @@ int strcontains(char *s, char *t)
   return 1;
 }
 
-char *lineptr[MAXLINES]; /* pointers to text lines */
-
-int readlines(char *lineptr[], int nlines);
-void writelines(char *lineptr[], int nlines, int reversed);
-
-void qsort(void *lineptr[], int left, int right,
-      int (*comp)(void*,void*,int skipchartest (int (*shouldskipchar)(char)),int conversion (int (*charconversion)(int))));
-//int numcmp(char *, char *);
-void swap(void *v[], int i, int j);
-int numcmp(char *s1, char *s2);
-double atof(char *s);
-
-int getaline(char *, int);
-char *alloc(int);
-
-static char allocbuf[ALLOCSIZE]; /* storage for alloc */
-static char *allocp = allocbuf;  /* next free position */
-
 /* sort input lines */
 
 int main(int argc, char *argv[])
@@ -161,12 +165,9 @@ int main(int argc, char *argv[])
       :
       (int (*)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int))) strcmpall;
 
-
-
-
   if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
     qsort((void**) lineptr, 0, nlines-1,
-        funcpointer);
+        funcpointer, shouldskipchar, charconversion);
     writelines(lineptr, nlines, reversed);
     return 0;
   } else {
@@ -178,8 +179,12 @@ int main(int argc, char *argv[])
 }
 
 /* qsort: sort v[left]...v[right] into increasing order */
-void qsort(void *v[], int left, int right,
-      int (*comp)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int)))
+void qsort(
+    void *v[], int left, int right,
+    int (*comp)(void*,void*,int (*shouldskipchar)(char), int (*charconversion)(int)),
+    int (*shouldskipchar)(char),
+    int (*charconversion)(int)
+    )
 {
   int i, last;
 
@@ -195,8 +200,8 @@ void qsort(void *v[], int left, int right,
       swap(v, ++last, i);
   }
   swap(v, left, last);
-  qsort(v, left, last-1, comp);
-  qsort(v, last+1, right, comp);
+  qsort(v, left, last-1, comp, shouldskipchar, charconversion);
+  qsort(v, last+1, right, comp, shouldskipchar, charconversion);
 }
 
 /*  atof: convert string s to double */
@@ -235,7 +240,7 @@ double atof(char *s)
 
     /* get the e-based power */
     for (epower = 0; isdigit(*s); s++)
-        epower = epower * 10 + (*s - '0');
+      epower = epower * 10 + (*s - '0');
     /* now multiply val by 10^epower */
     assert (esign == 1 || esign == -1);
     if (esign > 0) {
