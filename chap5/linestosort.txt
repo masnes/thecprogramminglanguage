@@ -3,6 +3,11 @@ this is Line 2
 this is line 3
 this is Line 4
 this is line 5
+this is ~{*&)*((&-line 1
+this is ~{*&)*((&-line 2
+this is ~{*&)*((&-line 3
+this is ~{*&)*((&-Line 4
+this is ~{*&)*((&-Line 5
 13
 12
 2

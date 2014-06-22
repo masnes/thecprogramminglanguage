@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
 #include <assert.h>
@@ -13,7 +14,7 @@ char *lineptr[MAXLINES]; /* pointers to text lines */
 int readlines(char *lineptr[], int nlines);
 void writelines(char *lineptr[], int nlines, int reversed);
 
-void qsort(void *lineptr[], int left, int right,
+void qsorta(void *lineptr[], int left, int right,
       int (*comp)(void*,void*,int (*shouldskipchar)(char), int (*charconversion)(int)),
       int (*shouldskipchar)(char),
       int (*charconversion)(int)
@@ -21,7 +22,7 @@ void qsort(void *lineptr[], int left, int right,
 //int numcmp(char *, char *);
 void swap(void *v[], int i, int j);
 int numcmp(char *s1, char *s2);
-double atof(char *s);
+double aatof(char *s);
 
 int getaline(char *, int);
 char *alloc(int);
@@ -87,6 +88,7 @@ int strcmpall(char *s, char *t, int (*shouldskipchar)(int),
       t++;
     if (charconversion(*s) != charconversion(*t))
       break;
+    s++; t++;
   }
   return charconversion(*s) - charconversion(*t);
 }
@@ -157,7 +159,7 @@ int main(int argc, char *argv[])
   shouldskipchar = directoryorder ? isntdirchar : zerofunc;
 
   // convert to lowercase, or just stay the same
-  charconversion = !casesensitive ? charreturn : tolower;
+  charconversion = casesensitive ? charreturn : tolower;
 
   // numeric or string comparison
   funcpointer =  numeric ?
@@ -166,7 +168,7 @@ int main(int argc, char *argv[])
       (int (*)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int))) strcmpall;
 
   if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
-    qsort((void**) lineptr, 0, nlines-1,
+    qsorta((void**) lineptr, 0, nlines-1,
         funcpointer, shouldskipchar, charconversion);
     writelines(lineptr, nlines, reversed);
     return 0;
@@ -178,8 +180,8 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-/* qsort: sort v[left]...v[right] into increasing order */
-void qsort(
+/* qsorta: sort v[left]...v[right] into increasing order */
+void qsorta(
     void *v[], int left, int right,
     int (*comp)(void*,void*,int (*shouldskipchar)(char), int (*charconversion)(int)),
     int (*shouldskipchar)(char),
@@ -200,21 +202,29 @@ void qsort(
       swap(v, ++last, i);
   }
   swap(v, left, last);
-  qsort(v, left, last-1, comp, shouldskipchar, charconversion);
-  qsort(v, last+1, right, comp, shouldskipchar, charconversion);
+  qsorta(v, left, last-1, comp, shouldskipchar, charconversion);
+  qsorta(v, last+1, right, comp, shouldskipchar, charconversion);
 }
 
-/*  atof: convert string s to double */
-double atof(char *s)
+/*  aatof: convert string s to double */
+// TODO: function seems to be inconsistend for
+// lines that have non number characters
+// e.g. "this is real-text line, line 12"
+// should return either -12, or (12?),  but
+// I haven't determined actual return value
+double aatof(char *s)
 {
   double val, power, epower;
   int j, numsign, esign;
 
-  for ( ; isspace(*s); s++) /* skip white space */
-    ;
-  numsign = (*s == '-') ? -1 : 1;
-  if (*s == '+' || *s == '-')
+  // skip non-numeric characters
+  while (!isdigit(*s)) {
+    if (*s == EOF || *s == '\0')
+      return 0;
+    if (*s == '+' || *s == '-')
+      numsign = (*s == '-') ? -1 : 1;
     s++;
+  }
 
   // calculate regular values (ie 12.345)
   for (val = 0.0; isdigit(*s); s++)
@@ -229,7 +239,6 @@ double atof(char *s)
   /* consider e value if present (12.345e7) */
   if (*s == 'e' || *s == 'E') {
     s++;
-
     /* get the sign */
     if (*s == '-' || *s == '+') {
       esign = (*s == '-') ? -1 : 1;
@@ -250,7 +259,6 @@ double atof(char *s)
       for (j = 0; j < epower; j++)
         val /= 10;
     }
-
   }
 
   return numsign * val / power;
@@ -261,8 +269,8 @@ int numcmp(char *s1, char *s2)
 {
   double v1, v2;
 
-  v1 = atof(s1);
-  v2 = atof(s2);
+  v1 = atof((const char*)s1);
+  v2 = atof((const char*)s2);
   if (v1 < v2)
     return -1;
   else if (v1 > v2)
