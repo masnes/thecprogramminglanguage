@@ -8,6 +8,16 @@
 #define ALLOCSIZE 100000 /*  size of available space */
 #define MAXLEN 1000 /* max length of any input line */
 
+/* don't skip any characters when reading a line */
+#define NOSKIP 0
+/* skip non directory characters (not alphanumeric or blank) */
+#define SKIPNONDIRCHARS 1
+
+/* don't convert any characters when reading a line */
+#define NOCONVERT 0
+/* convert all characters to lowercase when reading a line */
+#define TOLOWER 1
+
 /* strcmpa (pointer version): return <0 if s<t, 0 if s==t, >0 if s>t */
 int strcmpa(char *s, char *t)
 {
@@ -40,33 +50,49 @@ int isntdirchar(char c)
   return 1;
 }
 
-/* zerofunc: return 0 */
-int zerofunc(char c)
+/*skipchar: scaffolding to determine if a character should be skipped */
+int skipchar(char c, int skipmethod)
 {
+  if (skipmethod == NOSKIP)
+    return 0;
+  if (skipmethod == SKIPNONDIRCHARS) {
+    if (isntdirchar(c))
+      return 1;
+    else
+      return 0;
+  }
+
+  // only valid skip methods
+  assert(skipmethod == NOSKIP || skipmethod == SKIPNONDIRCHARS);
   return 0;
 }
 
-/* charreturn: return value of inputted char (nop) */
-int charreturn(int c)
+/*charconvertscaffold: scaffolding to determine how a character should be converted, and to then return the converted character */
+char charconversion(char c, int charconvertmethod)
 {
-  return c;
+  if (charconvertmethod == TOLOWER)
+    return tolower(c);
+  if (charconvertmethod == NOCONVERT)
+    return c;
+
+  assert(charconvertmethod == TOLOWER || charconvertmethod == NOCONVERT);
+  return 0;
 }
 
 /* strcmpall: compare strings by given paramenters, returning
  * >0 if s > t, 0 if s == t, < 0 if s < t */
-int strcmpall(char *s, char *t, int (*shouldskipchar)(int),
-    int (*charconversion)(char))
+int strcmpall(char *s, char *t, int skipmethod, int charconvertmethod)
 {
   assert(s != NULL && t != NULL);
   while (*s != '\0' && *t != '\0') {
-    while (shouldskipchar(charconversion(*s)) && *s != '\0')
+    while (skipchar(charconversion(*s, charconvertmethod), skipmethod) && *s != '\0')
       s++;
-    while (shouldskipchar(charconversion(*t)) && *t != '\0')
+    while (skipchar(charconversion(*t, charconvertmethod), skipmethod) && *t != '\0')
       t++;
-    if (charconversion(*s) != charconversion(*t))
+    if (charconversion(*s, charconvertmethod) != charconversion(*t, charconvertmethod))
       break;
   }
-  return charconversion(*s) - charconversion(*t);
+  return charconversion(*s, charconvertmethod) - charconversion(*t, charconvertmethod);
 }
 
 /* strcontainschar: return 1 if s contains t, 0 otherwise */
@@ -98,10 +124,10 @@ int readlines(char *lineptr[], int nlines);
 void writelines(char *lineptr[], int nlines, int reversed);
 
 void qsort(void *lineptr[], int left, int right,
-      int (*comp)(void*,void*,int skipchartest (int (*shouldskipchar)(char)),int conversion (int (*charconversion)(int))));
-//int numcmp(char *, char *);
+    int (*comp)(void *, void *, int, int), int skipmethod, int charconvertmethod);
+int numcmp(char *, char *, int, int);
 void swap(void *v[], int i, int j);
-int numcmp(char *s1, char *s2);
+int numcmp(char *s1, char *s2, int, int);
 double atof(char *s);
 
 int getaline(char *, int);
@@ -119,13 +145,8 @@ int main(int argc, char *argv[])
   int reversed = 0; /* 1 if reversed output */
   int casesensitive = 1; /* 0 if not case sensitive */
   int directoryorder = 0; /* 1 if only checking letters/numbers/blanks */
-  // functions to use
-  /* comparison function to use */
-  int (*funcpointer)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int));
-  /* function used to determine if character should be skipped (possibly if not alphanum/blank, possibly a nop*/
-  int (*shouldskipchar)(char);
-  /* function used to convert character (possibly to lower case, possibly no conversion */
-  int (*charconversion)(int);
+  int charconvertmethod, skipmethod;
+  int (*funcpointer)(void *, void *);
 
   // parse input
   for (i = 1; i < argc; i++) {
@@ -149,24 +170,26 @@ int main(int argc, char *argv[])
     }
   }
 
-  // skip non directory characters?
-  shouldskipchar = directoryorder ? isntdirchar : zerofunc;
+  if (casesensitive)
+    charconvertmethod = TOLOWER;
+  else
+    charconvertmethod = NOCONVERT;
 
-  // convert to lowercase, or just stay the same
-  charconversion = !casesensitive ? charreturn : tolower;
+  if (directoryorder)
+    skipmethod = SKIPNONDIRCHARS;
+  else
+    skipmethod = NOSKIP;
 
-  // numeric or string comparison
-  funcpointer =  numeric ?
-      (int (*)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int))) numcmp
-      :
-      (int (*)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int))) strcmpall;
-
-
-
+  // choose sorting function to use
+  if (numeric) {
+    funcpointer = (int (*)(void*,void*,int,int)) numcmp;
+  } else { // comparing string
+    funcpointer = (int (*)(void*,void*,int,int)) strcmpall;
+  }
 
   if ((nlines = readlines(lineptr, MAXLINES)) >= 0) {
     qsort((void**) lineptr, 0, nlines-1,
-        funcpointer);
+        funcpointer, skipmethod, charconvertmethod);
     writelines(lineptr, nlines, reversed);
     return 0;
   } else {
@@ -179,7 +202,7 @@ int main(int argc, char *argv[])
 
 /* qsort: sort v[left]...v[right] into increasing order */
 void qsort(void *v[], int left, int right,
-      int (*comp)(void*,void*,int (*shouldskipchar)(char),int (*charconversion)(int)))
+    int (*comp)(void *, void *, int, int), int skipmethod, int charconvertmethod)
 {
   int i, last;
 
@@ -191,12 +214,12 @@ void qsort(void *v[], int left, int right,
   last = left;
   for (i = left+1; i <= right; i++) {
     //printf("i: %d, %ld, left: %d, %ld, %p right: %d, %ld\n s[i]:\"%s\", s[left]:\"%s\"\n", i, (char *) v[i] - allocbuf, left, (char *) v[left] - allocbuf, v[left], right, (char *) v[right] - allocbuf, v[i], v[left]);
-    if ( ((*comp)(v[i], v[left], shouldskipchar, charconversion)) < 0 )
+    if ( ((*comp)(v[i], v[left], skipmethod, charconvertmethod)) < 0 )
       swap(v, ++last, i);
   }
   swap(v, left, last);
-  qsort(v, left, last-1, comp);
-  qsort(v, last+1, right, comp);
+  qsort(v, left, last-1, comp, skipmethod, charconvertmethod);
+  qsort(v, last+1, right, comp, skipmethod, charconvertmethod);
 }
 
 /*  atof: convert string s to double */
@@ -252,9 +275,10 @@ double atof(char *s)
 }
 
 /* numcmp: compare s1 and s2 numerically */
-int numcmp(char *s1, char *s2)
+int numcmp(char *s1, char *s2, int skipmethod, int charconvertmethod)
 {
   double v1, v2;
+  //char l1[MAXLEN], l2[MAXLEN];
 
   v1 = atof(s1);
   v2 = atof(s2);
