@@ -1,0 +1,166 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+ALLOCSIZE	alloc_afree.c	1;"	d	file:
+ALLOCSIZE	pointtofunc.c	9;"	d	file:
+ALLOCSIZE	sortlines.c	6;"	d	file:
+ALPHABETSIZE	strcontains.c	1;"	d	file:
+BRACKETS	dcl.c	/^enum { NAME, PARENS, BRACKETS };$/;"	e	enum:__anon1	file:
+BRACKETS	undcl.c	/^enum { NAME, PARENS, BRACKETS };$/;"	e	enum:__anon2	file:
+BUFMAX	reversewithrecurse.c	3;"	d	file:
+BUFSIZE	dcl.c	5;"	d	file:
+BUFSIZE	getch.c	1;"	d	file:
+BUFSIZE	getfloat.c	49;"	d	file:
+BUFSIZE	undcl.c	5;"	d	file:
+CC	Makefile	/^CC=clang$/;"	m
+CFLAGS	Makefile	/^CFLAGS=-Wall -lm -g$/;"	m
+EXECUTABLE	Makefile	/^EXECUTABLE=$/;"	m
+LDFLAGS	Makefile	/^LDFLAGS=$/;"	m
+MAXLEN	pointtofunc.c	10;"	d	file:
+MAXLEN	sortlines.c	7;"	d	file:
+MAXLINE	find.c	3;"	d	file:
+MAXLINE	getline.c	3;"	d	file:
+MAXLINELEN	tail.c	6;"	d	file:
+MAXLINES	pointtofunc.c	8;"	d	file:
+MAXLINES	sortlines.c	5;"	d	file:
+MAXLINES	tail.c	5;"	d	file:
+MAXSIZE	expr.c	5;"	d	file:
+MAXSTORAGE	tail.c	10;"	d	file:
+MAXTOKEN	dcl.c	6;"	d	file:
+MAXTOKEN	undcl.c	6;"	d	file:
+NAME	dcl.c	/^enum { NAME, PARENS, BRACKETS };$/;"	e	enum:__anon1	file:
+NAME	undcl.c	/^enum { NAME, PARENS, BRACKETS };$/;"	e	enum:__anon2	file:
+NUMBER	getop.c	4;"	d	file:
+OBJECTS	Makefile	/^OBJECTS=$/;"	m
+PARENS	dcl.c	/^enum { NAME, PARENS, BRACKETS };$/;"	e	enum:__anon1	file:
+PARENS	undcl.c	/^enum { NAME, PARENS, BRACKETS };$/;"	e	enum:__anon2	file:
+SOURCES	Makefile	/^SOURCES=$/;"	m
+aatof	pointtofunc.c	/^double aatof(char *s)$/;"	f
+afree	alloc_afree.c	/^void afree(char *p) \/* free storage pointed to by p *\/$/;"	f
+afree	pointtofunc.c	/^void afree(char *p) \/* free storage pointed to by p *\/$/;"	f
+afree	sortlines.c	/^void afree(char *p)  \/* free storage pointed to by p *\/$/;"	f
+alloc	alloc_afree.c	/^char *alloc(int n) \/* returns pointer to n characters *\/$/;"	f
+alloc	pointtofunc.c	/^char *alloc(int n) \/* returns pointer to n characters *\/$/;"	f
+alloc	sortlines.c	/^char *alloc(int n)    \/* return pointer to n characters *\/$/;"	f
+allocbuf	alloc_afree.c	/^static char allocbuf[ALLOCSIZE]; \/* storage for alloc *\/$/;"	v	file:
+allocbuf	pointtofunc.c	/^static char allocbuf[ALLOCSIZE]; \/* storage for alloc *\/$/;"	v	file:
+allocbuf	sortlines.c	/^static char allocbuf[ALLOCSIZE]; \/* storage for alloc *\/$/;"	v	file:
+allocp	alloc_afree.c	/^static char *allocp = allocbuf;  \/* next free position *\/$/;"	v	file:
+allocp	pointtofunc.c	/^static char *allocp = allocbuf;  \/* next free position *\/$/;"	v	file:
+allocp	sortlines.c	/^static char *allocp = allocbuf;  \/* next free position *\/$/;"	v	file:
+astrcat	strcat.c	/^char *astrcat(char *s, char*t)$/;"	f
+astrcpy	strcat.c	/^void astrcpy(char *s, char *t)$/;"	f
+astrncat	strntools.c	/^void astrncat(char *s, char *t, int n)$/;"	f
+astrncmp	strntools.c	/^int astrncmp(char *s, char *t, int n)$/;"	f
+astrncpy	strntools.c	/^void astrncpy(char *s, char *t, int n)$/;"	f
+atof	atof.c	/^double atof(char *s)$/;"	f
+atof	atofextended.c	/^double atof(char *s)$/;"	f
+buf	dcl.c	/^char buf[BUFSIZE];  \/* buffer for ungetch *\/$/;"	v
+buf	getch.c	/^char buf[BUFSIZE];  \/* buffer for ungetch *\/$/;"	v
+buf	getfloat.c	/^char buf[BUFSIZE];  \/* buffer for ungetch *\/$/;"	v
+buf	undcl.c	/^char buf[BUFSIZE];  \/* buffer for ungetch *\/$/;"	v
+bufp	dcl.c	/^int bufp = 0;       \/* next free position in buf *\/$/;"	v
+bufp	getch.c	/^int bufp = 0;       \/* next free position in buf *\/$/;"	v
+bufp	getfloat.c	/^int bufp = 0;       \/* next free position in buf *\/$/;"	v
+bufp	undcl.c	/^int bufp = 0;       \/* next free position in buf *\/$/;"	v
+c	tail.c	/^char c; \/\/ tracks most recent character gotten$/;"	v
+charbuf	expr.c	/^static char charbuf[MAXSIZE];$/;"	v	file:
+charlocation	expr.c	/^static int charlocation = 0;$/;"	v	file:
+charreturn	pointtofunc.c	/^int charreturn(int c)$/;"	f
+datatype	dcl.c	/^char datatype[MAXTOKEN];   \/* data type = char, int, etc. *\/$/;"	v
+datatype	undcl.c	/^char datatype[MAXTOKEN];   \/* data type = char, int, etc. *\/$/;"	v
+day_of_year	datefuncs.c	/^int day_of_year(int year, int month, int day)$/;"	f
+day_of_year	datefuncswithpointers.c	/^int day_of_year(int year, int month, int day)$/;"	f
+daytab	datefuncs.c	/^static char daytab[2][13] = {$/;"	v	file:
+daytab	datefuncswithpointers.c	/^static char daytab[2][13] = {$/;"	v	file:
+dcl	dcl.c	/^void dcl(void)$/;"	f
+dcl	undcl.c	/^void dcl(void)$/;"	f
+dirdcl	dcl.c	/^void dirdcl(void)$/;"	f
+dirdcl	undcl.c	/^void dirdcl(void)$/;"	f
+getaline	pointtofunc.c	/^int getaline(char s[], int lim)$/;"	f
+getaline	sortlines.c	/^int getaline(char s[], int lim)$/;"	f
+getaline	tail.c	/^char *getaline(void)$/;"	f
+getch	dcl.c	/^int getch(void) \/*  get a (possibly pushed-back) character *\/$/;"	f
+getch	getch.c	/^int getch(void) \/*  get a (possibly pushed-back) character *\/$/;"	f
+getch	getfloat.c	/^int getch(void) \/*  get a (possibly pushed-back) character *\/$/;"	f
+getch	undcl.c	/^int getch(void) \/*  get a (possibly pushed-back) character *\/$/;"	f
+getfloat	getfloat.c	/^float getfloat(float *pn)$/;"	f
+getint	getint.c	/^int getint(int *pn)$/;"	f
+getop	getop.c	/^int getop(char *s)$/;"	f
+getparameter	tail.c	/^int getparameter(int argc, char *argv[])$/;"	f
+gettoken	dcl.c	/^int gettoken(void) \/* return next token *\/$/;"	f
+gettoken	undcl.c	/^int gettoken(void) \/* return next token *\/$/;"	f
+intbuf	expr.c	/^static int intbuf[MAXSIZE];$/;"	v	file:
+intlocation	expr.c	/^static int intlocation = 0;$/;"	v	file:
+isntdirchar	pointtofunc.c	/^int isntdirchar(char c)$/;"	f
+isoperator	expr.c	/^int isoperator(char c)$/;"	f
+lineptr	pointtofunc.c	/^char *lineptr[MAXLINES]; \/* pointers to text lines *\/$/;"	v
+lineptr	sortlines.c	/^char *lineptr[MAXLINES];  \/* pointers to text lines *\/$/;"	v
+main	atofextended.c	/^int main(void)$/;"	f
+main	dcl.c	/^int main() \/* convert declaration to words *\/$/;"	f
+main	echo1.c	/^int main(int argc, char *argv[])$/;"	f
+main	echo2.c	/^int main (int argc, char *argv[])$/;"	f
+main	expr.c	/^int main(int argc, char *argv[])$/;"	f
+main	find.c	/^int main(int argc, char *argv[])$/;"	f
+main	getfloat.c	/^int main(void)$/;"	f
+main	getline.c	/^int main(int argc, char *argv[])$/;"	f
+main	pointtofunc.c	/^int main(int argc, char *argv[])$/;"	f
+main	reversewithrecurse.c	/^int main(void)$/;"	f
+main	sortlines.c	/^int main()$/;"	f
+main	strcat.c	/^int main(void)$/;"	f
+main	strend.c	/^int main(void)$/;"	f
+main	strntools.c	/^int main(void)$/;"	f
+main	tail.c	/^int main(int argc, char *argv[])$/;"	f
+main	undcl.c	/^int main() \/* convert declaration to words *\/$/;"	f
+mathfunc	expr.c	/^int mathfunc(int first, int second, char operator)$/;"	f
+month_day	datefuncs.c	/^void month_day(int year, int yearday, int *pmonth, int *pday)$/;"	f
+month_day	datefuncswithpointers.c	/^void month_day(int year, int yearday, int *pmonth, int *pday)$/;"	f
+month_name	datefuncs.c	/^char *month_name(int n)$/;"	f
+month_name	datefuncswithpointers.c	/^char *month_name(int n)$/;"	f
+name	dcl.c	/^char name[MAXTOKEN];       \/* identifier name *\/$/;"	v
+name	undcl.c	/^char name[MAXTOKEN];       \/* identifier name *\/$/;"	v
+numcmp	numcmp.c	/^int numcmp(char *s1, char *s2)$/;"	f
+numcmp	pointtofunc.c	/^int numcmp(char *s1, char *s2)$/;"	f
+out	dcl.c	/^char out[1000];$/;"	v
+out	undcl.c	/^char out[1000];$/;"	v
+popchar	expr.c	/^char popchar(void)$/;"	f
+popint	expr.c	/^int popint(void)$/;"	f
+pushchar	expr.c	/^int pushchar(char chartopush)$/;"	f
+pushint	expr.c	/^void pushint(int inttopush)$/;"	f
+qsort	sortlines.c	/^void qsort(char *v[], int left, int right)$/;"	f
+qsorta	pointtofunc.c	/^void qsorta($/;"	f
+readlines	pointtofunc.c	/^int readlines(char *lineptr[], int maxlines)$/;"	f
+readlines	sortlines.c	/^int readlines(char *lineptr[], int maxlines, char linearray[])$/;"	f
+reverse	reversewithrecurse.c	/^void reverse(char *s, char *t)$/;"	f
+stoi	expr.c	/^int stoi(char *s)$/;"	f
+stoi	tail.c	/^int stoi(char *s)$/;"	f
+strarray	tail.c	/^char strarray[MAXSTORAGE]; \/\/ stores line strings$/;"	v
+strcmp	strcmp.c	/^int strcmp(char *s, char *t)$/;"	f
+strcmp	strcmp2.c	/^int strcmp(char *s, char *t)$/;"	f
+strcmpa	pointtofunc.c	/^int strcmpa(char *s, char *t)$/;"	f
+strcmpall	pointtofunc.c	/^int strcmpall(char *s, char *t, int (*shouldskipchar)(int),$/;"	f
+strcmpnocase	pointtofunc.c	/^int strcmpnocase(char *s, char *t)$/;"	f
+strcontains	pointtofunc.c	/^int strcontains(char *s, char *t)$/;"	f
+strcontains	strcontains.c	/^int strcontains(char *s, char *t)$/;"	f
+strcontainschar	pointtofunc.c	/^int strcontainschar(char *s, char t)$/;"	f
+strcpypointer3	strcpypointer3.c	/^void strcpypointer3(char *s, char *t)$/;"	f
+strend	strend.c	/^int strend(char *s, char *t)$/;"	f
+strlen	strlen3.c	/^int strlen(char *s)$/;"	f
+strlennew	strlen2.c	/^int strlennew(char *s)$/;"	f
+swap	pointtofunc.c	/^void swap(void *v[], int i, int j)$/;"	f
+swap	sortlines.c	/^void swap(char *v[], int i, int j)$/;"	f
+swap	swap.c	/^void swap(void *v[], int i, int j)$/;"	f
+token	dcl.c	/^char token[MAXTOKEN];      \/* last token string *\/$/;"	v
+token	undcl.c	/^char token[MAXTOKEN];      \/* last token string *\/$/;"	v
+tokentype	dcl.c	/^int tokentype;             \/* type of last token *\/$/;"	v
+tokentype	undcl.c	/^int tokentype;             \/* type of last token *\/$/;"	v
+ungetch	dcl.c	/^void ungetch(int c)  \/* push character back on input *\/$/;"	f
+ungetch	getch.c	/^void ungetch(int c)  \/* push character back on input *\/$/;"	f
+ungetch	getfloat.c	/^void ungetch(int c)  \/* push character back on input *\/$/;"	f
+ungetch	undcl.c	/^void ungetch(int c)  \/* push character back on input *\/$/;"	f
+writelines	pointtofunc.c	/^void writelines(char *lineptr[], int nlines, int reversed)$/;"	f
+writelines	sortlines.c	/^void writelines(char *lineptr[], int nlines)$/;"	f
+zerofunc	pointtofunc.c	/^int zerofunc(char c)$/;"	f

@@ -1,0 +1,23 @@
+char **argv
+int (*daytab)[13]
+int *daytab[13]
+void *comp()
+void (*comp)()
+char (*(*x())[])()
+char (*(*x[3])())[5]
+unsigned int (*daytab)[13]
+unsigned long int *daytab[13]
+static void *comp()
+static void (*comp)()
+begin input errors()
+input error
+char ((((
+void ))
+
+end input errors()
+void (*comp)()
+char (*(*x())[])()
+char (*(*x[3])())[5]
+unsigned int (*daytab)[13]
+unsigned long int *daytab[13]
+static void *comp()

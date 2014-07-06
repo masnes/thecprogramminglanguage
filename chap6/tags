@@ -1,0 +1,50 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BUFSIZE	keywordcounting.c	7;"	d	file:
+CC	Makefile	/^CC=clang$/;"	m
+CFLAGS	Makefile	/^CFLAGS=-Wall -lm -g$/;"	m
+EXECUTABLE	Makefile	/^EXECUTABLE=$/;"	m
+LDFLAGS	Makefile	/^LDFLAGS=$/;"	m
+LINECOMMENT	keywordcounting.c	10;"	d	file:
+MAXWORD	keywordcounting.c	5;"	d	file:
+NKEYS	keywordcounting.c	6;"	d	file:
+NOTCOMMENT	keywordcounting.c	9;"	d	file:
+OBJECTS	Makefile	/^OBJECTS=$/;"	m
+SOURCES	Makefile	/^SOURCES=$/;"	m
+TERMINATEDCOMMENT	keywordcounting.c	11;"	d	file:
+XMAX	makepoint.c	1;"	d	file:
+YMAX	makepoint.c	2;"	d	file:
+binsearch	keywordcounting.c	/^int binsearch(char *word, struct key tab[], int n)$/;"	f
+buf	keywordcounting.c	/^char buf[BUFSIZE];  \/* buffer for ungetch *\/$/;"	v
+bufp	keywordcounting.c	/^int bufp = 0;       \/* next free position in buf *\/$/;"	v
+canonrect	makepoint.c	/^struct rect canonrect(struct rect r)$/;"	f
+count	keywordcounting.c	/^   int count;$/;"	m	struct:key	file:
+get_comment_state	keywordcounting.c	/^int get_comment_state(int comment_type, int might_be_comment, int might_end_comment, char c)$/;"	f
+getch	keywordcounting.c	/^int getch(void) \/*  get a (possibly pushed-back) character *\/$/;"	f
+getword	keywordcounting.c	/^int getword(char *word, int lim)$/;"	f
+handle_line_comment	keywordcounting.c	/^char *handle_line_comment(char *w, int lim, char startingchar)$/;"	f
+handle_possible_comment	keywordcounting.c	/^char *handle_possible_comment(char *w, int lim, char startingchar)$/;"	f
+handle_string	keywordcounting.c	/^char *handle_string(char *w, int lim, char startingchar)$/;"	f
+handle_terminated_comment	keywordcounting.c	/^char *handle_terminated_comment(char *w, int lim, char startingchar)$/;"	f
+iswordchar	keywordcounting.c	/^int iswordchar(char c)$/;"	f
+key	keywordcounting.c	/^struct key {$/;"	s	file:
+keytab	keywordcounting.c	/^} keytab[] = {$/;"	v	typeref:struct:key
+main	keywordcounting.c	/^int main()$/;"	f
+main	makepoint.c	/^int main() {$/;"	f
+max	makepoint.c	5;"	d	file:
+middle	makepoint.c	/^struct point middle;$/;"	v	typeref:struct:point
+min	makepoint.c	4;"	d	file:
+point	makepoint.c	/^struct point {$/;"	s	file:
+pt1	makepoint.c	/^   struct point pt1;$/;"	m	struct:rect	typeref:struct:rect::point	file:
+pt2	makepoint.c	/^   struct point pt2;$/;"	m	struct:rect	typeref:struct:rect::point	file:
+ptinrect	makepoint.c	/^int ptinrect(struct point p, struct rect r)$/;"	f
+rect	makepoint.c	/^struct rect {$/;"	s	file:
+screen	makepoint.c	/^struct rect screen;$/;"	v	typeref:struct:rect
+ungetch	keywordcounting.c	/^void ungetch(int c)  \/* push character back on input *\/$/;"	f
+word	keywordcounting.c	/^   char *word;$/;"	m	struct:key	file:
+x	makepoint.c	/^   int x;$/;"	m	struct:point	file:
+y	makepoint.c	/^   int y;$/;"	m	struct:point	file:
