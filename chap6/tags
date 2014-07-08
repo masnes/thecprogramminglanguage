@@ -4,35 +4,49 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
+BUFSIZE	btree.c	6;"	d	file:
 BUFSIZE	keywordcounting.c	7;"	d	file:
 CC	Makefile	/^CC=clang$/;"	m
 CFLAGS	Makefile	/^CFLAGS=-Wall -lm -g$/;"	m
 EXECUTABLE	Makefile	/^EXECUTABLE=$/;"	m
 LDFLAGS	Makefile	/^LDFLAGS=$/;"	m
-LINECOMMENT	keywordcounting.c	10;"	d	file:
+MAXWORD	btree.c	5;"	d	file:
 MAXWORD	keywordcounting.c	5;"	d	file:
 NKEYS	keywordcounting.c	6;"	d	file:
-NOTCOMMENT	keywordcounting.c	9;"	d	file:
 OBJECTS	Makefile	/^OBJECTS=$/;"	m
 SOURCES	Makefile	/^SOURCES=$/;"	m
-TERMINATEDCOMMENT	keywordcounting.c	11;"	d	file:
 XMAX	makepoint.c	1;"	d	file:
 YMAX	makepoint.c	2;"	d	file:
+addtree	btree.c	/^struct tnode *addtree(struct tnode *p, char *w)$/;"	f
 binsearch	keywordcounting.c	/^int binsearch(char *word, struct key tab[], int n)$/;"	f
+buf	btree.c	/^char buf[BUFSIZE];  \/* buffer for ungetch *\/$/;"	v
 buf	keywordcounting.c	/^char buf[BUFSIZE];  \/* buffer for ungetch *\/$/;"	v
+bufp	btree.c	/^int bufp = 0;       \/* next free position in buf *\/$/;"	v
 bufp	keywordcounting.c	/^int bufp = 0;       \/* next free position in buf *\/$/;"	v
 canonrect	makepoint.c	/^struct rect canonrect(struct rect r)$/;"	f
+count	btree.c	/^   int count;              \/* number of occurrences of text *\/$/;"	m	struct:tnode	file:
 count	keywordcounting.c	/^   int count;$/;"	m	struct:key	file:
-get_comment_state	keywordcounting.c	/^int get_comment_state(int comment_type, int might_be_comment, int might_end_comment, char c)$/;"	f
+getch	btree.c	/^int getch(void) \/*  get a (possibly pushed-back) character *\/$/;"	f
 getch	keywordcounting.c	/^int getch(void) \/*  get a (possibly pushed-back) character *\/$/;"	f
+getword	btree.c	/^int getword(char *word, int lim)$/;"	f
 getword	keywordcounting.c	/^int getword(char *word, int lim)$/;"	f
+handle_line_comment	btree.c	/^char *handle_line_comment(char *w, int lim, char startingchar)$/;"	f
 handle_line_comment	keywordcounting.c	/^char *handle_line_comment(char *w, int lim, char startingchar)$/;"	f
+handle_normal_word	btree.c	/^char *handle_normal_word(char *w, int lim, char startingchar)$/;"	f
+handle_normal_word	keywordcounting.c	/^char *handle_normal_word(char *w, int lim, char startingchar)$/;"	f
+handle_number	btree.c	/^char *handle_number(char *w, int lim, char startingchar)$/;"	f
+handle_possible_comment	btree.c	/^char *handle_possible_comment(char *w, int lim, char startingchar)$/;"	f
 handle_possible_comment	keywordcounting.c	/^char *handle_possible_comment(char *w, int lim, char startingchar)$/;"	f
+handle_string	btree.c	/^char *handle_string(char *w, int lim, char startingchar)$/;"	f
 handle_string	keywordcounting.c	/^char *handle_string(char *w, int lim, char startingchar)$/;"	f
+handle_terminated_comment	btree.c	/^char *handle_terminated_comment(char *w, int lim, char startingchar)$/;"	f
 handle_terminated_comment	keywordcounting.c	/^char *handle_terminated_comment(char *w, int lim, char startingchar)$/;"	f
+iswordchar	btree.c	/^int iswordchar(char c)$/;"	f
 iswordchar	keywordcounting.c	/^int iswordchar(char c)$/;"	f
 key	keywordcounting.c	/^struct key {$/;"	s	file:
 keytab	keywordcounting.c	/^} keytab[] = {$/;"	v	typeref:struct:key
+left	btree.c	/^   struct tnode *left;     \/* left child *\/$/;"	m	struct:tnode	typeref:struct:tnode::tnode	file:
+main	btree.c	/^int main()$/;"	f
 main	keywordcounting.c	/^int main()$/;"	f
 main	makepoint.c	/^int main() {$/;"	f
 max	makepoint.c	5;"	d	file:
@@ -43,8 +57,12 @@ pt1	makepoint.c	/^   struct point pt1;$/;"	m	struct:rect	typeref:struct:rect::po
 pt2	makepoint.c	/^   struct point pt2;$/;"	m	struct:rect	typeref:struct:rect::point	file:
 ptinrect	makepoint.c	/^int ptinrect(struct point p, struct rect r)$/;"	f
 rect	makepoint.c	/^struct rect {$/;"	s	file:
+right	btree.c	/^   struct tnode *right;    \/* right child *\/$/;"	m	struct:tnode	typeref:struct:tnode::tnode	file:
 screen	makepoint.c	/^struct rect screen;$/;"	v	typeref:struct:rect
+tnode	btree.c	/^struct tnode {  \/* the tree node *\/$/;"	s	file:
+ungetch	btree.c	/^void ungetch(int c)  \/* push character back on input *\/$/;"	f
 ungetch	keywordcounting.c	/^void ungetch(int c)  \/* push character back on input *\/$/;"	f
+word	btree.c	/^   char *word;             \/* Points to text *\/$/;"	m	struct:tnode	file:
 word	keywordcounting.c	/^   char *word;$/;"	m	struct:key	file:
 x	makepoint.c	/^   int x;$/;"	m	struct:point	file:
 y	makepoint.c	/^   int y;$/;"	m	struct:point	file:
