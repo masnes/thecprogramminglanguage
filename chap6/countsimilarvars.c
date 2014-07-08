@@ -178,7 +178,9 @@ char *handle_number(char *w, int lim, char startingchar)
 /* handle_string: gets characters until the string ends */
 char *handle_string(char *w, int lim, char startingchar)
 {
+   char stringtype = startingchar;
    char c = startingchar;
+   char cprev;
 
    if (lim <= 0) {
       *w++ = '\0';
@@ -193,13 +195,14 @@ char *handle_string(char *w, int lim, char startingchar)
 
    *w++ = c;
    while (--lim > 1) {
+      cprev = c;
       c = getch();
       *w++ = c;
       if (c == EOF) {
          *w++ = c;
          return w;
       }
-      if (c == '"' || c == '\'')
+      if (c == stringtype && cprev != '\\')
          break;
    }
 

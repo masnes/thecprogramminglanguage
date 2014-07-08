@@ -17,7 +17,7 @@ int iswordchar(char c);
 char *handle_normal_word(char *w, int lim, char startingchar);
 char *handle_number(char *w, int lim, char startingchar);
 char *handle_string(char *w, int lim, char startingchar);
-char *handle_line_comment(char *w, int lim, char startingchar);
+char *get_line_comment(char *w, int lim, char startingchar);
 char *handle_possible_comment(char *w, int lim, char startingchar);
 
 struct tnode {  /* the tree node */
@@ -169,7 +169,9 @@ char *handle_number(char *w, int lim, char startingchar)
 /* handle_string: gets characters until the string ends */
 char *handle_string(char *w, int lim, char startingchar)
 {
+   char stringtype = startingchar;
    char c = startingchar;
+   char cprev;
 
    if (lim <= 0) {
       *w++ = '\0';
@@ -184,13 +186,14 @@ char *handle_string(char *w, int lim, char startingchar)
 
    *w++ = c;
    while (--lim > 1) {
+      cprev = c;
       c = getch();
       *w++ = c;
       if (c == EOF) {
          *w++ = c;
          return w;
       }
-      if (c == '"' || c == '\'')
+      if (c == stringtype && cprev != '\\')
          break;
    }
 
@@ -200,11 +203,38 @@ char *handle_string(char *w, int lim, char startingchar)
 }
 
 /*
- * handle_line_comment: get characters until comment
+ * skip_line_comment: get characters until comment
+ * terminates, discarding them. Return null string
+ */
+char *skip_line_comment(char *w, int lim, char startingchar)
+{
+   char c = startingchar;
+   char cprev = *w;
+
+   if (c != '/' || cprev != '/') {
+      fprintf(stderr, "Error: non '//' started comment passed to "
+            "get_line_comment\n"
+            "cprev: %c, c: %c\n", cprev, c);
+      *(++w) = '\0';
+      return ++w;
+   }
+
+   while((c = getch()) != EOF && c !='\n')
+      ;
+
+   // return the newline to the char buffer
+   // this way it's exactly as if the comment didn't exist
+   ungetch(c);
+   // make a null string
+   *w++ = '\0';
+   return w;
+}
+/*
+ * get_line_comment: get characters until comment
  * terminates, or a character limit is reached. Then return position
  * to add next character to
  */
-char *handle_line_comment(char *w, int lim, char startingchar)
+char *get_line_comment(char *w, int lim, char startingchar)
 {
    char c = startingchar;
    char cprev = *w;
@@ -215,7 +245,7 @@ char *handle_line_comment(char *w, int lim, char startingchar)
    }
    if (c != '/' || cprev != '/') {
       fprintf(stderr, "Error: non '//' started comment passed to "
-            "handle_line_comment\n"
+            "get_line_comment\n"
             "cprev: %c, c: %c\n", cprev, c);
       *(++w) = '\0';
       return ++w;
@@ -244,11 +274,39 @@ char *handle_line_comment(char *w, int lim, char startingchar)
 }
 
 /*
- * handle_terminated_comment: get characters until comment
+ * skip_terminated_comment: get characters until comment
+ * terminates, discarding them.
+ * return null string
+ */
+char *skip_terminated_comment(char *w, int lim, char startingchar)
+{
+   char c = startingchar;
+   char cprev = *w;
+
+   if (cprev != '/' && c != '*') {
+      fprintf(stderr, "Error: non '/*' started comment passed to "
+            "get_terminated_comment \n");
+      *w++ = '\0';
+      return w;
+   }
+
+   while (cprev != '*' || c != '/') {
+      cprev = c;
+      c = getch();
+      if (c == EOF)
+         break;
+   }
+
+   *w++ = '\0';
+   return w;
+}
+
+/*
+ * get_terminated_comment: get characters until comment
  * terminates, or a character limit is reached. Then return position
  * to add next character to
  */
-char *handle_terminated_comment(char *w, int lim, char startingchar)
+char *get_terminated_comment(char *w, int lim, char startingchar)
 {
    char c = startingchar;
    char cprev = *w;
@@ -259,7 +317,7 @@ char *handle_terminated_comment(char *w, int lim, char startingchar)
    }
    if (cprev != '/' && c != '*') {
       fprintf(stderr, "Error: non '/*' started comment passed to "
-            "handle_terminated_comment \n");
+            "get_terminated_comment \n");
       *w++ = '\0';
       return w;
    }
@@ -311,10 +369,10 @@ char *handle_possible_comment(char *w, int lim, char startingchar)
    lim--;
 
    if (c == '/' && lim > 0) { // line comment
-      w = handle_line_comment(w-1, lim, c);
+      w = get_line_comment(w-1, lim, c);
    }
    else if (c == '*' && lim > 0) { // '*/' terminated comment
-      w = handle_terminated_comment(w-1, lim, c);
+      w = get_terminated_comment(w-1, lim, c);
    }
    else {
       ungetch(c);

@@ -1,82 +1,126 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
 
 #define MAXWORD 100
-#define NKEYS (sizeof keytab / sizeof(struct key))
 #define BUFSIZE 100 /* buffer size for getch/ungetch */
+#define STOP   -1
+#define NUMVARTYPES 6 // number of variable types searched for (struct, int, char, etc)
+#define STRUCT 0 // location of "struct" in vartypes
 
-struct key {
+struct qualifiers {
+   char * word;
+} qualifiers[] = {
+   { "long" },
+   { "unsigned" }
+};
+struct vartypes {
    char *word;
-   int count;
-} keytab[] = {
-   { "auto", 0, },
-   { "break", 0, },
-   { "case", 0, },
-   { "char", 0, },
-   { "const", 0, },
-   { "continue", 0, },
-   { "default", 0, },
-   { "do", 0, },
-   { "double", 0, },
-   { "else", 0, },
-   { "enum", 0, },
-   { "extern", 0, },
-   { "float", 0, },
-   { "for", 0, },
-   { "goto", 0, },
-   { "if", 0, },
-   { "int", 0, },
-   { "long", 0, },
-   { "register", 0, },
-   { "return", 0, },
-   { "short", 0, },
-   { "signed", 0, },
-   { "sizeof", 0, },
-   { "static", 0, },
-   { "struct", 0, },
-   { "switch", 0, },
-   { "typedef", 0, },
-   { "union", 0, },
-   { "unsigned", 0, },
-   { "void", 0, },
-   { "volatile", 0, },
-   { "while", 0 }
+} vartypes[] = {
+   { "struct" }, // If this location is changed STRUCT must be \
+   redefined
+   { "int" },
+   { "void" },
+   { "char" },
+   { "float" },
+   { "double" }
 };
 
-int getword(char *, int);
-int binsearch(char *, struct key *, int);
+struct tnode *addtree(struct tnode *, char *);
+struct tnode *talloc(void);
+char *strdupa(char *);
+void treeprint(struct tnode *);
+int binsearch(char *, struct vartypes *, int);
+int get_var_name(char *, int);
+char getword(char *, int);
 int getch(void); /*  get a (possibly pushed-back) character */
 void ungetch(int c);  /* push character back on input */
 int iswordchar(char c);
-int get_comment_state(int comment_type, int might_be_comment, int might_end_comment, char c);
+int is_var_type(char *w);
 char *handle_normal_word(char *w, int lim, char startingchar);
+char *handle_number(char *w, int lim, char startingchar);
 char *handle_string(char *w, int lim, char startingchar);
-char *handle_possible_comment(char *w, int lim, char startingchar);
-char *get_terminated_comment(char *w, int lim, char startingchar);
 char *get_line_comment(char *w, int lim, char startingchar);
-char *skip_terminated_comment(char *w, int lim, char startingchar);
+char *get_terminated_comment(char *w, int lim, char startingchar);
 char *skip_line_comment(char *w, int lim, char startingchar);
+char *skip_terminated_comment(char *w, int lim, char startingchar);
+char *handle_possible_comment(char *w, int lim, char startingchar);
 
-/* count C keywords */
+// I'll use this for storing variable names
+struct tnode {  /* the tree node */
+   char *word;             /* Points to text */
+   int count;              /* number of occurrences of text */
+   struct tnode *left;     /* left child */
+   struct tnode *right;    /* right child */
+};
+
+/* variable name frequency count */
 int main()
 {
-   int n;
+   struct tnode *root;
    char word[MAXWORD];
+   char c;
 
-   while (getword(word, MAXWORD) != EOF)
-      if (isalpha(word[0]))
-         if ((n = binsearch(word, keytab, NKEYS)) >= 0)
-            keytab[n].count++;
-   for (n = 0; n < NKEYS; n++)
-      if (keytab[n].count > 0)
-         printf("%4d %s\n",
-               keytab[n].count, keytab[n].word);
+   root = NULL;
+   while ((c = getword(word, MAXWORD)) != EOF)
+      if (isalpha(c))  //
+         if (is_var_type(word))
+               root = addtree(root, word);
+   treeprint(root);
+   return 0;
+}
+
+/* get_var_names: get the names of variables
+ * a variable comes after a vartype ("char", "int", etc.), but is not
+ * followed by an opening paren '('
+ * vartype checking is left to other functions
+ *
+ * notes:
+ *    all variables start with a vartype
+ *    if we're in parentheses, names are separated by commas and
+ *    vartypes, names stop when exiting parentheses
+ *
+ *    if we're not in parentheses, names are separated by commas,
+ *    stop when a ';' appears
+ *
+ *    names that terminate in '(' are actually function names
+ *
+ *    structs have an extra word proceeding the variable name
+ *
+ *    need new mode for handling inside parentheses
+ */
+int get_var_names_outof_paren()
+{
+   char word[MAXWORD];
+   char prevword[MAXWORD];
+   struct tnode *root;
+
+   // if word is a vartype
+   if (is_var_type(prevword)) {
+      while (getword(word, MAXWORD) != EOF)
+   }
+
+}
+
+/*
+ * get_var_names_in_paren: addes variable names to tree, set up
+ * for handling inside of parentheses
+ * returns count of variables added to tree
+ * returns -1 on error
+ */
+int get_var_names_in_paren(
+
+/* is_var_type: checks if a word is the name of a variable type */
+int is_var_type(char *w)
+{
+   if (binsearch(w, vartypes, NUMVARTYPES) != -1)
+      return 1;
    return 0;
 }
 
 /* binsearch: find word in tab[0]...tab[n-1] */
-int binsearch(char *word, struct key tab[], int n)
+int binsearch(char *word, struct vartypes tab[], int n)
 {
    int cond;
    int low, high, mid;
@@ -95,8 +139,39 @@ int binsearch(char *word, struct key tab[], int n)
    return -1;
 }
 
+/* addtree: add a node with w, at or below p */
+struct tnode *addtree(struct tnode *p, char *w)
+{
+   int cond;
+
+   if (p == NULL) {     /* a new word has arrived */
+      p = talloc();     /* make a new node */
+      p->word = strdup(w);
+      p->count = 1;
+      p->left = p->right = NULL;
+   } else if ((cond = strcmp(w, p->word)) == 0) {
+      p->count++;       /* repeat word */
+   } else if (cond < 0) {  /* less than into left subtree */
+      p->left = addtree(p->left, w);
+   } else {                /* greater than into right subtree */
+      p->right = addtree(p->right, w);
+   }
+   return p;
+}
+
+/* treeprint: in-order print of tree p */
+void treeprint(struct tnode *p)
+{
+   if (p != NULL) {
+      treeprint(p->left);
+      printf("%4d %s\n", p->count, p->word);
+      treeprint(p->right);
+   }
+}
+
+
 /* getword: get next word or character from input */
-int getword(char *word, int lim)
+char getword(char *word, int lim)
 {
    int c, getch(void);
    void ungetch(int);
@@ -108,26 +183,43 @@ int getword(char *word, int lim)
 
    if (c == EOF) {
       *w = c;
-      printf("%s\n", word);
+      //printf("%s\n", word);
       return word[0];
    }
 
    if (c == '"' || c == '\'') {
       handle_string(w, lim, c);
-      printf("%s\n", word);
+      //printf("%s\n", word);
       return word[0];
    } else if (c == '/') {
       handle_possible_comment(w, lim, c);
-      printf("%s\n", word);
+      //printf("%s\n", word);
       return word[0];
-   } else if (!iswordchar(c)) {
-      *w = c;
+   } else if (isdigit(c)) {
+      handle_number(w, lim, c);
+      //printf("%s\n", word);
+      return word[0];
+   } else if (iswordchar(c)) {
+      handle_normal_word(w, lim, c);
+      //printf("%s\n", word);
       return word[0];
    } else {
-      handle_normal_word(w, lim, c);
-      printf("%s\n", word);
+      *w = c;
+      //printf("%s\n", word);
       return word[0];
    }
+}
+
+/* iswordchar: return 1 if character is considered part of a word, 0 otherwise */
+int iswordchar(char c)
+{
+   if (isalpha(c))
+      return 1;
+   if (c == '_')
+      return 1;
+   if (c == '.')
+      return 1;
+   return 0;
 }
 
 /* handle_normal_word: write a normal word to the word buffer */
@@ -142,28 +234,35 @@ char *handle_normal_word(char *w, int lim, char startingchar)
 
    *w++ = c;
    lim--;
-   for ( ; --lim > 1; w++)
+   for ( ; --lim > 0; w++)
       if (!iswordchar(*w = getch())) {
          ungetch(*w);
          break;
       }
    if (lim == 0)
       ungetch(*w);
-   *w = '\0';
+   *w++ = '\0';
 
    return w;
 }
 
-/* iswordchar: return 1 if character is considered part of a word, 0 otherwise */
-int iswordchar(char c)
+/* handle_number: handles number words */
+char *handle_number(char *w, int lim, char startingchar)
 {
-   if (isalnum(c))
-      return 1;
-   if (c == '_')
-      return 1;
-   if (c == '.')
-      return 1;
-   return 0;
+   char c = startingchar;
+   char cprev = 'c'; // initialize cprev to non-digit character
+
+   while (lim > 1) {
+      if (isdigit(c) || ((c == ',' || c == '.') && isdigit(cprev))) {
+         *w++ = cprev = c;
+         c = getch();
+         lim--;
+      } else
+         break;
+   }
+   ungetch(c);
+   *w++ = '\0';
+   return w;
 }
 
 /* handle_string: gets characters until the string ends */
@@ -309,10 +408,10 @@ char *skip_terminated_comment(char *w, int lim, char startingchar)
 char *get_terminated_comment(char *w, int lim, char startingchar)
 {
    char c = startingchar;
-   char cprev = *w++;
+   char cprev = *w;
 
    if (lim <= 0) {
-      *(w-1) = '\0';
+      *w++ = '\0';
       return w;
    }
    if (cprev != '/' && c != '*') {
@@ -354,7 +453,7 @@ char *handle_possible_comment(char *w, int lim, char startingchar)
    char c = startingchar;
 
    if (lim <= 0) {
-      *w = '\0';
+      *w++ = '\0';
       return w;
    }
    if (c != '/') {
@@ -369,15 +468,15 @@ char *handle_possible_comment(char *w, int lim, char startingchar)
    lim--;
 
    if (c == '/' && lim > 0) { // line comment
-      w = get_line_comment(w-1, lim, c);
+      w = handle_line_comment(w-1, lim, c);
    }
    else if (c == '*' && lim > 0) { // '*/' terminated comment
-      w = get_terminated_comment(w-1, lim, c);
+      w = handle_terminated_comment(w-1, lim, c);
    }
    else {
       ungetch(c);
       *(++w) = '\0';
-      return w;
+      return ++w;
    }
 
    return w;
@@ -399,4 +498,20 @@ void ungetch(int c)  /* push character back on input */
       printf("Ungetch: too many characters\n");
    else
       buf[bufp++] = c;
+}
+
+char *strdupa(char *s) /* make a duplicate of s */
+{
+   char *p;
+
+   p = (char *) malloc(strlen(s)+1); /* +1 for '\0' */
+   if (p != NULL)
+      strcpy(p, s);
+   return p;
+}
+
+/* talloc: make a tnode */
+struct tnode *talloc(void)
+{
+   return (struct tnode *) malloc(sizeof(struct tnode));
 }
