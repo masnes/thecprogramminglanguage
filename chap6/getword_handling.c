@@ -11,7 +11,7 @@ char getword(char *word, int lim)
 
    char *w = word;
 
-   while (isspace(c = getch()))
+   while (isspace(c = getch()) && c != '\n')
       ;
 
    if (c == EOF) {

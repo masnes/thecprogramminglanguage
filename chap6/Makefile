@@ -5,7 +5,7 @@ SOURCES=
 OBJECTS=
 EXECUTABLE=
 
-all: keywordcounting
+all: distinct_words
 	
 reversepolishcalc:
 	$(CC) $(CFLAGS) $(SOURCES) -o $(EXECUTABLE)

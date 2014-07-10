@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <assert.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
@@ -11,6 +12,8 @@ struct tnode *addtree(struct tnode *, char *);
 struct tnode *talloc(void);
 char *strdupa(char *);
 void treeprint(struct tnode *);
+struct tnode *treeprocess(struct tnode *wordcountroot, struct tnode *countroot);
+struct tnode *addtreebycount(struct tnode *p, char *w, int count);
 
 struct tnode {  /* the tree node */
    char *word;             /* Points to text */
@@ -22,14 +25,22 @@ struct tnode {  /* the tree node */
 /* word frequency count */
 int main()
 {
-   struct tnode *root;
+   struct tnode *wordroot;
+   struct tnode *countroot;
    char word[MAXWORD];
 
-   root = NULL;
+   wordroot = countroot = NULL;
    while (getword(word, MAXWORD) != EOF)
       if (isalpha(word[0]))
-         root = addtree(root, word);
-   treeprint(root);
+         wordroot = addtree(wordroot, word);
+
+   countroot = talloc();
+   countroot->word = "";
+   countroot->count = 0;
+   countroot->left = countroot->right = NULL;
+
+   countroot = treeprocess(wordroot, countroot);
+   treeprint(countroot);
    return 0;
 }
 
@@ -53,6 +64,24 @@ struct tnode *addtree(struct tnode *p, char *w)
    return p;
 }
 
+/* addtree: add a node with w, at or below p */
+struct tnode *addtreebycount(struct tnode *p, char *w, int count)
+{
+   if (p == NULL) {     /* a new word has arrived */
+      p = talloc();     /* make a new node */
+      p->word = strdup(w);
+      p->count = count;
+      p->left = p->right = NULL;
+   } else if (strcmp(w, p->word) == 0) {
+      p->count++;       /* repeat word */
+   } else if (count <= p->count) {  /* less than eq into left subtree */
+      p->left = addtreebycount(p->left, w, count);
+   } else {                /* greater than into right subtree */
+      p->right = addtreebycount(p->right, w, count);
+   }
+   return p;
+}
+
 /* treeprint: in-order print of tree p */
 void treeprint(struct tnode *p)
 {
@@ -61,6 +90,23 @@ void treeprint(struct tnode *p)
       printf("%4d %s\n", p->count, p->word);
       treeprint(p->right);
    }
+}
+
+/*
+ * treeprocess: process the old tree (sorted alphabetically)
+ * into a new tree (sorted by count)
+ */
+struct tnode *treeprocess(struct tnode *p, struct tnode *d)
+{
+   struct tnode *ret = NULL;
+
+   if (p != NULL) {
+      treeprocess(p->left, d);
+      ret = addtreebycount(d, p->word, p->count);
+      treeprocess(p->right, d);
+   }
+
+   return ret;
 }
 
 char *strdupa(char *s) /* make a duplicate of s */
