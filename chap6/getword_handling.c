@@ -32,7 +32,7 @@ char getword(char *word, int lim)
       handle_number(w, lim, c);
       //printf("%s\n", word);
       return word[0];
-   } else if (iswordchar(c)) {
+   } else if (is_word_char(c)) {
       handle_normal_word(w, lim, c);
       //printf("%s\n", word);
       return word[0];
@@ -43,8 +43,8 @@ char getword(char *word, int lim)
    }
 }
 
-/* iswordchar: return 1 if character is considered part of a word, 0 otherwise */
-int iswordchar(char c)
+/* is_word_char: return 1 if character is considered part of a word, 0 otherwise */
+int is_word_char(char c)
 {
    if (isalpha(c))
       return 1;
@@ -68,7 +68,7 @@ char *handle_normal_word(char *w, int lim, char startingchar)
    *w++ = c;
    lim--;
    for ( ; --lim > 0; w++)
-      if (!iswordchar(*w = getch())) {
+      if (!is_word_char(*w = getch())) {
          ungetch(*w);
          break;
       }

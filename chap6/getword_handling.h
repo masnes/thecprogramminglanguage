@@ -8,7 +8,7 @@
 #define MAXWORD 100
 
 char getword(char *word, int lim);
-int iswordchar(char c);
+int is_word_char(char c);
 char *handle_normal_word(char *w, int lim, char startingchar);
 char *handle_number(char *w, int lim, char startingchar);
 char *handle_string(char *w, int lim, char startingchar);

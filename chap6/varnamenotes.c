@@ -1,4 +1,4 @@
-
+// examples:
 int is_var_type(char *w) // w
 int binsearch(char *word, struct vartypes tab[], int n) // word, tab, n
 {

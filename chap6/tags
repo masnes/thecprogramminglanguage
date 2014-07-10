@@ -50,7 +50,7 @@ handle_normal_word	getword_handling.c	/^char *handle_normal_word(char *w, int li
 handle_number	getword_handling.c	/^char *handle_number(char *w, int lim, char startingchar)$/;"	f
 handle_possible_comment	getword_handling.c	/^char *handle_possible_comment(char *w, int lim, char startingchar)$/;"	f
 handle_string	getword_handling.c	/^char *handle_string(char *w, int lim, char startingchar)$/;"	f
-iswordchar	getword_handling.c	/^int iswordchar(char c)$/;"	f
+is_word_char	getword_handling.c	/^int is_word_char(char c)$/;"	f
 key	keywordcounting.h	/^struct key {$/;"	s
 keytab	keywordcounting.h	/^} keytab[] = {$/;"	v	typeref:struct:key
 left	btree.c	/^   struct tnode *left;     \/* left child *\/$/;"	m	struct:tnode	typeref:struct:tnode::tnode	file:

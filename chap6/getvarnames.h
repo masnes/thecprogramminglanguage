@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <assert.h>
 
 #define MAXWORD 100
 #define BUFSIZE 100 /* buffer size for getch/ungetch */
@@ -21,8 +22,8 @@ struct qualifiers {
 struct vartypes {
    char *word;
 } vartypes[] = {
-   { "struct" }, // If this location is changed STRUCT must be \
-   redefined
+   { "struct" }, // If this location is changed STRUCT must be 
+   // redefined
    { "int" },
    { "void" },
    { "char" },
@@ -38,14 +39,18 @@ struct tnode {  /* the tree node */
    struct tnode *right;    /* right child */
 };
 
-struct qualifiers; 
+struct qualifiers;
 struct tnode *addtree(struct tnode *, char *);
 struct tnode *talloc(void);
 char *strdupa(char *);
 void treeprint(struct tnode *);
 int binsearch(char *, struct vartypes *, int);
-int get_var_name(char *, int);
 int is_var_type(char *w);
+int is_struct(char *w);
+struct tnode *get_var_names(struct tnode *root);
+struct tnode *get_var_names_in_paren(struct tnode *root);
+struct tnode *handle_variable_outof_paren(struct tnode *root, char *starting_var);
+struct tnode *handle_variable_in_paren(struct tnode *root, char *starting_var);
 
 
 #endif
