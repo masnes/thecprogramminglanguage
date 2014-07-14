@@ -1,16 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-#define HASHSIZE 101
-
-static struct nlist *hashtab[HASHSIZE]; /* pointer table */
-
-struct nlist {       /* table entry: */
-   struct nlist *next;     /* next entry in chain */
-   char *name;             /* defined name */
-   char *defn;             /* replacment text */
-};
+#include "hashing.h"
 
 /* hash: form hash value for string s */
 unsigned hash(char *s)
@@ -32,9 +20,6 @@ struct nlist *lookup(char *s)
          return np;     /* found */
    return NULL;         /* not found */
 }
-
-struct nlist *lookup(char *);
-char *strdup(const char *);
 
 /* install: put (name, defn) in hashtab */
 struct nlist *install(char *name, char *defn)

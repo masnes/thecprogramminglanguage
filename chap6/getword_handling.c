@@ -1,7 +1,5 @@
 #include "getword_handling.h"
-#ifndef GETCH_H
-#include "getch.c"
-#endif
+#include "getch.h"
 
 /* getword: get next word or character from input */
 char getword(char *word, int lim)
@@ -11,11 +9,12 @@ char getword(char *word, int lim)
 
    char *w = word;
 
-   while (isspace(c = getch()) && c != '\n')
+   while ((c = getch()) != '\n' && isspace(c))
       ;
 
    if (c == EOF) {
       *w = c;
+      *(w+1) = '\0';
       //printf("%s\n", word);
       return word[0];
    }
@@ -38,6 +37,7 @@ char getword(char *word, int lim)
       return word[0];
    } else {
       *w = c;
+      *(w+1) = '\0';
       //printf("%s\n", word);
       return word[0];
    }
@@ -313,5 +313,4 @@ char *handle_possible_comment(char *w, int lim, char startingchar)
    }
 
    return w;
-
 }

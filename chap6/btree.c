@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include "getword_handling.c"
+#include "getword_handling.h"
 
 #define MAXWORD 100
 #define BUFSIZE 100 /* buffer size for getch/ungetch */

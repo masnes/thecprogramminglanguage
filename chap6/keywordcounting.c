@@ -1,7 +1,5 @@
 #include "keywordcounting.h"
-#ifndef GETWORD_HANDLING_H
-#include "getword_handling.c"
-#endif
+#include "getword_handling.h"
 
 /* count C keywords */
 int main()

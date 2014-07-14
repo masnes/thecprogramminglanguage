@@ -1,3 +1,5 @@
+#ifndef _CROSS_REFERENCER_H_
+#define _CROSS_REFERENCER_H_
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -36,3 +38,5 @@ struct tnode *talloc(void);
 char *strdupa(char *);
 void treeprint(struct tnode *);
 int binsearch(char *word, struct ignore tab[], int n);
+
+#endif

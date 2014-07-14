@@ -1,0 +1,4 @@
+stuff
+#define HELLO 030
+#define GOODBYE max(a,b)
+

@@ -1,5 +1,5 @@
 #include "cross_referencer.h"
-#include "getword_handling.c"
+#include "getword_handling.h"
 
 /* word frequency count */
 int main()
